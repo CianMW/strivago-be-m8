@@ -3,7 +3,7 @@ import mongoose from "mongoose"
 import { IAccommodation } from "../../interfaces/IAccommodation";
 import { IDestModel } from "../../interfaces/IDestModel";
 
-export const DestinationSchema = new mongoose.Schema<IDestModel>({
+ const DestinationSchema = new mongoose.Schema<IDestModel>({
     name: { type: String, required: true },
     accommodation: [
            {    type: 'ObjectId', ref: 'Accommodation' }

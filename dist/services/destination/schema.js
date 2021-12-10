@@ -3,16 +3,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DestinationModel = exports.DestinationSchema = void 0;
+exports.DestinationModel = void 0;
 const mongoose_1 = require("mongoose");
 const mongoose_2 = __importDefault(require("mongoose"));
-exports.DestinationSchema = new mongoose_2.default.Schema({
+const DestinationSchema = new mongoose_2.default.Schema({
     name: { type: String, required: true },
     accommodation: [
         { type: 'ObjectId', ref: 'Accommodation' }
     ]
 }, { timestamps: true });
-exports.DestinationModel = (0, mongoose_1.model)("Accommodation", exports.DestinationSchema);
+exports.DestinationModel = (0, mongoose_1.model)("Accommodation", DestinationSchema);
 // // `Parent` represents the object as it is stored in MongoDB
 // interface Parent {
 //   child?: Types.ObjectId,

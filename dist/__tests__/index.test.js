@@ -5,10 +5,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const supertest_1 = __importDefault(require("supertest"));
 const mongoose_1 = __importDefault(require("mongoose"));
+const app_1 = require("../app");
 const dotenv_1 = __importDefault(require("dotenv"));
-const server_1 = require("../server");
 dotenv_1.default.config();
-const request = (0, supertest_1.default)(server_1.server);
+const MONGO_DB_URL_TEST = process.env.MONGO_DB_URL_TEST;
+// process.env.TS_NODE_ENV ? require("dotenv").config() : require("dotenv").config()
+const request = (0, supertest_1.default)(app_1.server);
 const validAccommodation = {
     name: "The grand hotel",
     city: "New York"
@@ -18,12 +20,13 @@ const testDestination = {
 };
 let _id = null;
 describe("Testing server", () => {
-    beforeAll((done) => {
-        // Starting the http server
-        server_1.server.listen(process.env.PORT, () => {
-            if (!process.env.MONGO_DB_TEST_URL) {
-                throw new Error("MONGO_URL_TEST is not defined");
-            }
+    beforeAll(done => {
+        if (!MONGO_DB_URL_TEST) {
+            throw new Error("MONGO_DB_URL_TEST is not defined");
+        }
+        mongoose_1.default.connect(MONGO_DB_URL_TEST).then(() => {
+            console.log("Connected to test database");
+            done();
         });
     });
     // POST /accommodation = Creat a new accomodation entry
@@ -116,11 +119,12 @@ describe("Testing server", () => {
         expect(response.status).toBe(204);
         expect(checkDestinations.body.length).toBeGreaterThan(0);
     });
-    //POST /destinations - invalid data
-    it("Should try add a new destination returns 400 if invalid data ", async () => {
-        expect(status).toBe(204);
-    });
-    afterAll((done) => {
+    //     //POST /destinations - invalid data
+    // it( "Should try add a new destination returns 400 if invalid data ",
+    //     async () => { 
+    //         expect(status).toBe(204)  
+    //     });
+    afterAll(done => {
         mongoose_1.default.connection
             .dropDatabase()
             .then(() => {

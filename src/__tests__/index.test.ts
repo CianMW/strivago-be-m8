@@ -103,7 +103,7 @@ describe("Testing server", () => {
     async () => {
         const createAccommodation = await request.post("/accommodation").send(validAccommodation)
         const id = createAccommodation.body[0]._id
-        const response = await request.post(`/accommodation/${id}`).send(editName)
+        const response = await request.put(`/accommodation/${id}`).send(editName)
 
         console.log(response)
         

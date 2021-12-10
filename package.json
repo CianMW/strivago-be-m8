@@ -19,7 +19,8 @@
     "express-list-endpoints": "^6.0.0",
     "jest": "^27.4.4",
     "mongoose": "^6.1.1",
-    "ts-node-dev": "^1.1.8"
+    "ts-node-dev": "^1.1.8",
+    "typescript": "^4.5.3"
   },
   "devDependencies": {
     "@types/dotenv": "^8.2.0",

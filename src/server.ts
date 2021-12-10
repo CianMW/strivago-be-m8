@@ -6,8 +6,6 @@ import {server} from "./app"
 
 process.env.TS_NODE_ENV ? require("dotenv").config() : require("dotenv").config()
 
-
-
 mongoose.connect(process.env.MONGO_DB_URL!)
 //connects to the server detailed in the env
 

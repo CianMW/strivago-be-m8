@@ -26,7 +26,7 @@ const accommodationList = await AccommodationModel.find({});
       const id = req.params.id;
       const singleAccommodation = await AccommodationModel.findById(id);
       if (singleAccommodation) {
-        res.status(200).send(singleAccommodation);
+        res.status(201).send(singleAccommodation);
       }
     } catch (error) {
       res.status(404).send();

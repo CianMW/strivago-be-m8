@@ -19,7 +19,7 @@ const validAccommodation : IAccommodation = {
 }
 
 const testDestination: IDestination = {
-    name: "London"
+    city: "London"
 }
 
 let _id: string| null = null
@@ -82,7 +82,7 @@ describe("Testing server", () => {
         console.log(id)
         console.log(fetchAccommodation.body)
         const response = await request.get(`/accommodation/${id}`)
-        expect(response.status).toBe(201)
+        expect(response.status).toBe(200)
     });
 
     //accom Id does not exist 
@@ -107,8 +107,9 @@ describe("Testing server", () => {
     "should test that the PUT /accommodation/:id endpoint edits an existing accommodation "
   ,
     async () => {
-        const createAccommodation = await request.post("/accommodation").send(validAccommodation)
-        const id = createAccommodation.body[0]._id
+        const createAccommodation = await request.get("/accommodation")
+        const id : string = createAccommodation.body[0]._id
+        console.log("THE ID: " + id)
         const response = await request.put(`/accommodation/${id}`).send(editName)
 
         console.log(response)
@@ -166,11 +167,11 @@ it(
 // # 204 ok
         it( "should test that the DELETE /accommodation/:id endpoint returns 204 if ok",
         async () => { 
-        const response = await request.delete(`/accomodation/${_id}`);
-        expect(response.status).toBe(204);
+        const fetchAccommodation = await request.get("/accommodation")
+        const id = fetchAccommodation.body[0]._id
         
-        const deleteAcommodationResponse = await request.get(`/accomodation/${_id}`);
-        expect(deleteAcommodationResponse.status).toBe(404);
+        const deleteAccommodationResponse = await request.get(`/accomodation/${id}`);
+        expect(deleteAccommodationResponse.status).toBe(404);
     });
     
     // # 404 if not existing
@@ -188,7 +189,7 @@ it( "Should add a new destination to be chosen as a location for POSTing your ho
     async () => { 
         const response = await request.post("/destinations").send(testDestination)
         const checkDestinations = await request.get("/destinations")
-        expect(response.status).toBe(204)  
+        expect(response.status).toBe(201)  
         expect(checkDestinations.body.length).toBeGreaterThan(0)  
     });
 

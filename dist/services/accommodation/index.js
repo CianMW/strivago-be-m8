@@ -25,7 +25,7 @@ AccomRouter
         const id = req.params.id;
         const singleAccommodation = await schema_1.AccommodationModel.findById(id);
         if (singleAccommodation) {
-            res.status(200).send(singleAccommodation);
+            res.status(201).send(singleAccommodation);
         }
     }
     catch (error) {

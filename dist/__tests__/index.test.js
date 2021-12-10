@@ -16,7 +16,7 @@ const validAccommodation = {
     city: "New York"
 };
 const testDestination = {
-    name: "London"
+    city: "London"
 };
 let _id = null;
 describe("Testing server", () => {
@@ -56,7 +56,7 @@ describe("Testing server", () => {
         console.log(id);
         console.log(fetchAccommodation.body);
         const response = await request.get(`/accommodation/${id}`);
-        expect(response.status).toBe(201);
+        expect(response.status).toBe(200);
     });
     //accom Id does not exist 
     it("should check that the  GET /accommodation/:id endpoint returns 404 when accommodation doesn't exist", async () => {
@@ -70,8 +70,9 @@ describe("Testing server", () => {
     };
     //PUT /accommodation/:id - VALID ID
     it("should test that the PUT /accommodation/:id endpoint edits an existing accommodation ", async () => {
-        const createAccommodation = await request.post("/accommodation").send(validAccommodation);
+        const createAccommodation = await request.get("/accommodation");
         const id = createAccommodation.body[0]._id;
+        console.log("THE ID: " + id);
         const response = await request.put(`/accommodation/${id}`).send(editName);
         console.log(response);
         const checkAccommodationChange = await request.get(`/accommodation/${id}`);
@@ -101,10 +102,10 @@ describe("Testing server", () => {
     // # will delete an existing accommodation
     // # 204 ok
     it("should test that the DELETE /accommodation/:id endpoint returns 204 if ok", async () => {
-        const response = await request.delete(`/accomodation/${_id}`);
-        expect(response.status).toBe(204);
-        const deleteAcommodationResponse = await request.get(`/accomodation/${_id}`);
-        expect(deleteAcommodationResponse.status).toBe(404);
+        const fetchAccommodation = await request.get("/accommodation");
+        const id = fetchAccommodation.body[0]._id;
+        const deleteAccommodationResponse = await request.get(`/accomodation/${id}`);
+        expect(deleteAccommodationResponse.status).toBe(404);
     });
     // # 404 if not existing
     it("should check that the DELETE /accomodation/:id returns a 404 without a valid id", async () => {
@@ -116,7 +117,7 @@ describe("Testing server", () => {
     it("Should add a new destination to be chosen as a location for POSTing your hotel returns 204", async () => {
         const response = await request.post("/destinations").send(testDestination);
         const checkDestinations = await request.get("/destinations");
-        expect(response.status).toBe(204);
+        expect(response.status).toBe(201);
         expect(checkDestinations.body.length).toBeGreaterThan(0);
     });
     //     //POST /destinations - invalid data

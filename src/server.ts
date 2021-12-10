@@ -2,6 +2,8 @@ import express from "express"
 import cors from "cors"
 import mongoose from "mongoose"
 import listEndpoints from "express-list-endpoints";
+import accomRouter from "./services/accommodation";
+import destRouter from "./services/destination";
 process.env.TS_NODE_ENV && require("dotenv").config()  
 
 
@@ -13,6 +15,9 @@ server.use(cors())
 server.use(express.json())
 
 //ROUTES
+server.use("/accommodation", accomRouter)
+server.use("/destinations", destRouter)
+
 
 mongoose.connect(process.env.MONGO_DB_URL!)
 //connects to the server detailed in the env

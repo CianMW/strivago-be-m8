@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import { server } from "../server";
 import { IAccommodation } from "../interfaces/IAccommodation";
+import {IDestination} from "../interfaces/IDestination"
 
 dotenv.config();
 
@@ -12,6 +13,10 @@ const request = supertest(server);
 const validAccommodation : IAccommodation = {
     name: "The grand hotel",
     city: "New York" 
+}
+
+const testDestination: IDestination = {
+    name: "London"
 }
 
 let _id: string| null = null
@@ -133,7 +138,7 @@ describe("Testing server", () => {
   ),
     async () => {
         const response = await request.get("/destinations")
-        expect(response.status).toBe(404)
+        expect(response.status).toBe(200)
         expect(response.body.length).toBeGreaterThan(0)
     };
 
@@ -142,11 +147,10 @@ it(
     "should test that the GET /destinations/:city endpoint retrieves a list of accommodations for a specific city "
   ),
     async () => {
-        const createDestination = await request.post("/destination").send(validAccommodation)
-        const id = createAccommodation.body[0]._id
-        const response = await request.post(`/accommodation/${id}`).send(editName)
+        const response = await request.get("/destination/new york")
 
-        expect(status).toBe(404)
+        expect(response.status).toBe(200)
+        expect(response.body.length).toBeGreaterThan(0)
     };
 
 // DELETE /accommodation/:id
@@ -176,10 +180,10 @@ it("should check that the DELETE /accomodation/:id returns a 404 without a valid
     //POST /destinations - valid
 it( "Should add a new destination to be chosen as a location for POSTing your hotel returns 204" ),
     async () => { 
-        const response = request.get("/destinations")
-
+        const response = await request.post("/destinations").send(testDestination)
+        const checkDestinations = await request.get("/destinations")
         expect(response.status).toBe(204)  
-        expect(response.body.length).toBe(204)  
+        expect(checkDestinations.body.length).toBeGreaterThan(0)  
     };
 
     //POST /destinations - invalid data

@@ -4,8 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest",
-    "watch": "jest --watchAll",
+    "test": "jest --watchAll --detectOpenHandles",
     "dev": "ts-node-dev ./src/server.ts"
   },
   "keywords": [],

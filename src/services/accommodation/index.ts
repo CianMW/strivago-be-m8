@@ -26,7 +26,7 @@ const accommodationList = await AccommodationModel.find({});
       const id = req.params.id;
       const singleAccommodation = await AccommodationModel.findById(id);
       if (singleAccommodation) {
-        res.status(201).send(singleAccommodation);
+        res.status(200).send(singleAccommodation);
       }
     } catch (error) {
       res.status(404).send();
@@ -58,9 +58,12 @@ const accommodationList = await AccommodationModel.find({});
   .put("/:id", async (req, res, next) => {
     try {
       const id = req.params.id
-      const updatedAccom = await AccommodationModel.findByIdAndUpdate(id, ...req.body, { new: true })
-
-      if (updatedAccom) {
+      console.log("The ID: ", id)
+      const updatedAccom = await AccommodationModel.findByIdAndUpdate(id, ...req.body,{ new: true }, (err: any) => {
+        err ? (console.log(err)) : (console.log("success"));
+    })
+      console.log(updatedAccom)
+      if (!updatedAccom) {
         res.status(201).send(updatedAccom)
       } 
     } catch (error) {

@@ -30,7 +30,9 @@ destinationRouter
 })
     .get("/:city", async (req, res) => {
     const city = req.params.city;
-    const destination = await schema_1.DestinationModel.findById({ city: city });
+    console.log("city : ", city);
+    const destination = await schema_1.DestinationModel.find({ city: city });
+    console.log("destinations: ", destination);
     try {
         if (destination) {
             res.status(200).send(destination);

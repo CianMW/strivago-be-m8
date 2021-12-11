@@ -13,10 +13,13 @@ const MONGO_DB_URL_TEST = process.env.MONGO_DB_URL_TEST;
 const request = (0, supertest_1.default)(app_1.server);
 const validAccommodation = {
     name: "The grand hotel",
-    city: "New York"
+    city: "london"
 };
 const testDestination = {
     city: "London"
+};
+const secondTestDestination = {
+    city: "paris"
 };
 let _id = null;
 describe("Testing server", () => {
@@ -59,14 +62,14 @@ describe("Testing server", () => {
         expect(response.status).toBe(200);
     });
     //accom Id does not exist 
-    it("should check that the  GET /accommodation/:id endpoint returns 404 when accommodation doesn't exist", async () => {
+    it("should check that the GET /accommodation/:id endpoint returns 404 when accommodation doesn't exist", async () => {
         const fetchAccommodation = await request.get("/accommodation");
         console.log(fetchAccommodation.body);
         const response = await request.get(`/accommodation/111`);
         expect(response.status).toBe(404);
     });
     const editName = {
-        name: "Broken Accommodation"
+        "name": "Broken Accommodation"
     };
     //PUT /accommodation/:id - VALID ID
     it("should test that the PUT /accommodation/:id endpoint edits an existing accommodation ", async () => {
@@ -86,6 +89,14 @@ describe("Testing server", () => {
         console.log(response);
         expect(response.status).toBe(404);
     });
+    //POST /destinations - valid
+    it("Should add a new destination to be chosen as a location for POSTing your hotel returns 204", async () => {
+        const response = await request.post("/destinations").send(testDestination);
+        const secondDestination = await request.post("/destinations").send(secondTestDestination);
+        const checkDestinations = await request.get("/destinations");
+        expect(response.status).toBe(201);
+        expect(checkDestinations.body.length).toBeGreaterThan(0);
+    });
     //GET /destinations
     it("should test that the GET /destinations endpoint returns a list of all available locations where there is an accommodation ", async () => {
         const response = await request.get("/destinations");
@@ -94,9 +105,8 @@ describe("Testing server", () => {
     });
     //GET/destinations/:city
     it("should test that the GET /destinations/:city endpoint retrieves a list of accommodations for a specific city ", async () => {
-        const response = await request.get("/destination/new york");
+        const response = await request.get(`/destinations/london`);
         expect(response.status).toBe(200);
-        expect(response.body.length).toBeGreaterThan(0);
     });
     // DELETE /accommodation/:id
     // # will delete an existing accommodation
@@ -113,13 +123,6 @@ describe("Testing server", () => {
         expect(response.status).toBe(404);
     });
     //----------------EXTRA---------------
-    //POST /destinations - valid
-    it("Should add a new destination to be chosen as a location for POSTing your hotel returns 204", async () => {
-        const response = await request.post("/destinations").send(testDestination);
-        const checkDestinations = await request.get("/destinations");
-        expect(response.status).toBe(201);
-        expect(checkDestinations.body.length).toBeGreaterThan(0);
-    });
     //     //POST /destinations - invalid data
     // it( "Should try add a new destination returns 400 if invalid data ",
     //     async () => { 

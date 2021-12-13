@@ -57,7 +57,9 @@ AccomRouter
     .put("/:id", async (req, res, next) => {
     try {
         const id = req.params.id;
-        const updatedAccom = await schema_1.AccommodationModel.findByIdAndUpdate(id, ...req.body, { new: true });
+        console.log("The ID: ", id);
+        const updatedAccom = await schema_1.AccommodationModel.findByIdAndUpdate(id, req.body, { new: true });
+        console.log(updatedAccom);
         if (updatedAccom) {
             res.status(201).send(updatedAccom);
         }

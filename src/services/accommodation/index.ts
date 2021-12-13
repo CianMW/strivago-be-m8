@@ -59,7 +59,7 @@ const accommodationList = await AccommodationModel.find({});
     try {
       const id = req.params.id
       console.log("The ID: ", id)
-      const updatedAccom = await AccommodationModel.findByIdAndUpdate(id, ...req.body, { new: true })
+      const updatedAccom = await AccommodationModel.findByIdAndUpdate(id, req.body, { new: true })
       console.log(updatedAccom)
       if (updatedAccom) {
         res.status(201).send(updatedAccom)

@@ -1,34 +1,44 @@
 import supertest from "supertest";
 import mongoose from "mongoose";
-import dotenv from "dotenv";
-import { server } from "../server";
+import { server } from "../app";
 import { IAccommodation } from "../interfaces/IAccommodation";
 import {IDestination} from "../interfaces/IDestination"
+import dotenv from 'dotenv';
 
 dotenv.config();
+
+const MONGO_DB_URL_TEST = process.env.MONGO_DB_URL_TEST!
+// process.env.TS_NODE_ENV ? require("dotenv").config() : require("dotenv").config()
 
 const request = supertest(server);
 
 
 const validAccommodation : IAccommodation = {
     name: "The grand hotel",
-    city: "New York" 
+    city: "london" 
 }
 
 const testDestination: IDestination = {
-    name: "London"
+    city: "London"
+}
+
+const secondTestDestination: IDestination = {
+    city: "paris"
 }
 
 let _id: string| null = null
 
 describe("Testing server", () => {
-  beforeAll((done) => {
-    // Starting the http server
-    server.listen(process.env.PORT, () => {
-      if (!process.env.MONGO_DB_TEST_URL) {
-        throw new Error("MONGO_URL_TEST is not defined");
-      }
-    });
+  beforeAll(done => {
+
+    if (!MONGO_DB_URL_TEST) {
+      throw new Error("MONGO_DB_URL_TEST is not defined")
+  }
+
+    mongoose.connect(MONGO_DB_URL_TEST).then(() => {
+      console.log("Connected to test database")
+      done()
+  })
   });
 
 
@@ -63,7 +73,6 @@ describe("Testing server", () => {
     const response = await request.get("/accommodation");
     expect(response.status).toBe(200)
     expect(response.body.length).toBeGreaterThan(0)
-
   });
 
   // GET /accommodation/:id
@@ -76,23 +85,22 @@ describe("Testing server", () => {
         console.log(id)
         console.log(fetchAccommodation.body)
         const response = await request.get(`/accommodation/${id}`)
-        expect(response.status).toBe(201)
+        expect(response.status).toBe(200)
     });
 
     //accom Id does not exist 
   it(
-    "should check that the  GET /accommodation/:id endpoint returns 404 when accommodation doesn't exist"
+    "should check that the GET /accommodation/:id endpoint returns 404 when accommodation doesn't exist"
   ,
     async () => {
         const fetchAccommodation = await request.get("/accommodation");
         console.log(fetchAccommodation.body)
         const response = await request.get(`/accommodation/111`)
         expect(response.status).toBe(404)
-
     });
     
     const editName = {
-        name: "Broken Accommodation"
+        "name": "Broken Accommodation"
     }
 
 
@@ -101,8 +109,9 @@ describe("Testing server", () => {
     "should test that the PUT /accommodation/:id endpoint edits an existing accommodation "
   ,
     async () => {
-        const createAccommodation = await request.post("/accommodation").send(validAccommodation)
-        const id = createAccommodation.body[0]._id
+        const createAccommodation = await request.get("/accommodation")
+        const id : string = createAccommodation.body[0]._id
+        console.log("THE ID: " + id)
         const response = await request.put(`/accommodation/${id}`).send(editName)
 
         console.log(response)
@@ -130,6 +139,15 @@ describe("Testing server", () => {
 
 
 
+    //POST /destinations - valid
+    it( "Should add a new destination to be chosen as a location for POSTing your hotel returns 204" ,
+    async () => { 
+        const response = await request.post("/destinations").send(testDestination)
+        const secondDestination = await request.post("/destinations").send(secondTestDestination)
+        const checkDestinations = await request.get("/destinations")
+        expect(response.status).toBe(201)  
+        expect(checkDestinations.body.length).toBeGreaterThan(0)  
+    });
 
 
     //GET /destinations
@@ -144,13 +162,11 @@ describe("Testing server", () => {
 
 //GET/destinations/:city
 it(
-    "should test that the GET /destinations/:city endpoint retrieves a list of accommodations for a specific city "
-  ,
+    "should test that the GET /destinations/:city endpoint retrieves a list of accommodations for a specific city ",
     async () => {
-        const response = await request.get("/destination/new york")
+        const response = await request.get(`/destinations/london`)
 
         expect(response.status).toBe(200)
-        expect(response.body.length).toBeGreaterThan(0)
     });
 
 // DELETE /accommodation/:id
@@ -160,11 +176,11 @@ it(
 // # 204 ok
         it( "should test that the DELETE /accommodation/:id endpoint returns 204 if ok",
         async () => { 
-        const response = await request.delete(`/accomodation/${_id}`);
-        expect(response.status).toBe(204);
+        const fetchAccommodation = await request.get("/accommodation")
+        const id = fetchAccommodation.body[0]._id
         
-        const deleteAcommodationResponse = await request.get(`/accomodation/${_id}`);
-        expect(deleteAcommodationResponse.status).toBe(404);
+        const deleteAccommodationResponse = await request.get(`/accomodation/${id}`);
+        expect(deleteAccommodationResponse.status).toBe(404);
     });
     
     // # 404 if not existing
@@ -177,22 +193,14 @@ it("should check that the DELETE /accomodation/:id returns a 404 without a valid
 
 
 //----------------EXTRA---------------
-    //POST /destinations - valid
-it( "Should add a new destination to be chosen as a location for POSTing your hotel returns 204" ,
-    async () => { 
-        const response = await request.post("/destinations").send(testDestination)
-        const checkDestinations = await request.get("/destinations")
-        expect(response.status).toBe(204)  
-        expect(checkDestinations.body.length).toBeGreaterThan(0)  
-    });
 
-    //POST /destinations - invalid data
-it( "Should try add a new destination returns 400 if invalid data ",
-    async () => { 
-        expect(status).toBe(204)  
-    });
+//     //POST /destinations - invalid data
+// it( "Should try add a new destination returns 400 if invalid data ",
+//     async () => { 
+//         expect(status).toBe(204)  
+//     });
 
-  afterAll((done) => {
+  afterAll(done => {
     mongoose.connection
       .dropDatabase()
       .then(() => {

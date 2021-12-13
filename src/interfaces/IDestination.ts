@@ -1,4 +1,4 @@
 export interface IDestination {
-    name: string
+    city: string
     _id?: string
 }

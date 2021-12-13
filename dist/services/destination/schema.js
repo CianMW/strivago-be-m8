@@ -7,12 +7,12 @@ exports.DestinationModel = void 0;
 const mongoose_1 = require("mongoose");
 const mongoose_2 = __importDefault(require("mongoose"));
 const DestinationSchema = new mongoose_2.default.Schema({
-    name: { type: String, required: true },
+    city: { type: String, required: true },
     accommodation: [
         { type: 'ObjectId', ref: 'Accommodation' }
     ]
 }, { timestamps: true });
-exports.DestinationModel = (0, mongoose_1.model)("Accommodation", DestinationSchema);
+exports.DestinationModel = (0, mongoose_1.model)("Destination", DestinationSchema);
 // // `Parent` represents the object as it is stored in MongoDB
 // interface Parent {
 //   child?: Types.ObjectId,

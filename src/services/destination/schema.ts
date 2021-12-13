@@ -4,15 +4,14 @@ import { IAccommodation } from "../../interfaces/IAccommodation";
 import { IDestModel } from "../../interfaces/IDestModel";
 
  const DestinationSchema = new mongoose.Schema<IDestModel>({
-    name: { type: String, required: true },
+    city: { type: String, required: true },
     accommodation: [
            {    type: 'ObjectId', ref: 'Accommodation' }
     ]
 }, { timestamps: true })
 
 
-export const DestinationModel = model<IDestModel>("Accommodation", DestinationSchema);
-
+export const DestinationModel = model<IDestModel>("Destination", DestinationSchema);
 
 // // `Parent` represents the object as it is stored in MongoDB
 // interface Parent {

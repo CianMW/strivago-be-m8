@@ -24,14 +24,17 @@ destinationRouter
         res.status(400).send()
     }
   })
-  .get("/:id", async (req, res) => {
-    const destination = await DestinationModel.findById(req.params.id);
+  .get("/:city", async (req, res) => {
+    const city = req.params.city
+    console.log("city : ", city)
+    const destination = await DestinationModel.find({city : city});
+    console.log("destinations: ",destination)
     try {
-        if (!destination) {
-          res.status(404).send();
+        if (destination) {
+          res.status(200).send(destination);
         } 
-    } catch {
-        res.send(destination);
+    } catch(error) {
+        res.status(404).send(error);
     }
   });
 

@@ -1,7 +1,7 @@
 import {Types} from "mongoose"
 
 export interface IDestModel {
-    name: string
+    city: string
     accommodation?: Types.ObjectId
 }
 
